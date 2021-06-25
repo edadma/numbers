@@ -1,8 +1,11 @@
+ThisBuild / licenses += "ISC" -> url("https://opensource.org/licenses/ISC")
+ThisBuild / versionScheme := Some("semver-spec")
+
 lazy val numbers = crossProject(JSPlatform, JVMPlatform, NativePlatform).in(file(".")).
   settings(
     name := "numbers",
-    version := "0.1.0",
-    scalaVersion := "2.13.5",
+    version := "0.1.2",
+    scalaVersion := "2.13.6",
     scalacOptions ++=
       Seq(
         "-deprecation", "-feature", "-unchecked",
@@ -10,11 +13,12 @@ lazy val numbers = crossProject(JSPlatform, JVMPlatform, NativePlatform).in(file
         "-Xasync"
       ),
     organization := "xyz.hyperreal",
+    githubOwner := "edadma",
+    githubRepository := "numbers",
     mainClass := Some("xyz.hyperreal.numbers.Main"),
     libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.5" % "test",
     publishMavenStyle := true,
-    publishArtifact in Test := false,
-    licenses += "ISC" -> url("https://opensource.org/licenses/ISC")
+    Test / publishArtifact := false
   ).
   jvmSettings(
     libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.0.0" % "provided",
