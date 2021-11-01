@@ -4,7 +4,7 @@ ThisBuild / versionScheme := Some("semver-spec")
 lazy val numbers = crossProject(JSPlatform, JVMPlatform, NativePlatform).in(file(".")).
   settings(
     name := "numbers",
-    version := "0.1.2",
+    version := "0.1.0",
     scalaVersion := "2.13.6",
     scalacOptions ++=
       Seq(
@@ -12,11 +12,11 @@ lazy val numbers = crossProject(JSPlatform, JVMPlatform, NativePlatform).in(file
         "-language:postfixOps", "-language:implicitConversions", "-language:existentials", "-language:dynamics",
         "-Xasync"
       ),
-    organization := "xyz.hyperreal",
+    organization := "io.github.edadma",
     githubOwner := "edadma",
     githubRepository := "numbers",
-    mainClass := Some("xyz.hyperreal.numbers.Main"),
-    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.5" % "test",
+    mainClass := Some(s"${organization.value}.${name.value}.Main"),
+    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.9" % "test",
     publishMavenStyle := true,
     Test / publishArtifact := false
   ).
