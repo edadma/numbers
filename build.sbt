@@ -1,15 +1,21 @@
 ThisBuild / licenses += "ISC" -> url("https://opensource.org/licenses/ISC")
 ThisBuild / versionScheme := Some("semver-spec")
 
-lazy val numbers = crossProject(JSPlatform, JVMPlatform, NativePlatform).in(file(".")).
-  settings(
+lazy val numbers = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+  .in(file("."))
+  .settings(
     name := "numbers",
-    version := "0.1.0",
+    version := "0.1.1",
     scalaVersion := "2.13.6",
     scalacOptions ++=
       Seq(
-        "-deprecation", "-feature", "-unchecked",
-        "-language:postfixOps", "-language:implicitConversions", "-language:existentials", "-language:dynamics",
+        "-deprecation",
+        "-feature",
+        "-unchecked",
+        "-language:postfixOps",
+        "-language:implicitConversions",
+        "-language:existentials",
+        "-language:dynamics",
         "-Xasync"
       ),
     organization := "io.github.edadma",
@@ -19,14 +25,14 @@ lazy val numbers = crossProject(JSPlatform, JVMPlatform, NativePlatform).in(file
     libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.9" % "test",
     publishMavenStyle := true,
     Test / publishArtifact := false
-  ).
-  jvmSettings(
+  )
+  .jvmSettings(
     libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.0.0" % "provided",
-  ).
-  nativeSettings(
+  )
+  .nativeSettings(
     nativeLinkStubs := true
-  ).
-  jsSettings(
+  )
+  .jsSettings(
     jsEnv := new org.scalajs.jsenv.nodejs.NodeJSEnv(),
 //    Test / scalaJSUseMainModuleInitializer := true,
 //    Test / scalaJSUseTestModuleInitializer := false,
