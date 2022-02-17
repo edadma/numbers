@@ -133,7 +133,7 @@ object BigDecimalMath {
   private val LN2D = math.log(2)
 
   object decimal128 {
-    implicit val bdmath = new BigDecimalMath(MathContext.DECIMAL128)
+    implicit val bdmath: BigDecimalMath = new BigDecimalMath(MathContext.DECIMAL128)
   }
 
   def ln(x: BigDecimal)(implicit bdmath: BigDecimalMath) = {

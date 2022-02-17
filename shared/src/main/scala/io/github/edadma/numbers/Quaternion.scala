@@ -2,7 +2,8 @@ package io.github.edadma.numbers
 
 import Numeric.Implicits._
 
-abstract class Quaternion[T: Numeric, F: Fractional, Q <: Quaternion[T, F, Q, P], P <: Quaternion[F, F, P, P]] extends Number {
+abstract class Quaternion[T: Numeric, F: Fractional, Q <: Quaternion[T, F, Q, P], P <: Quaternion[F, F, P, P]]
+    extends Number {
 
   val a: T
   val b: T
@@ -35,11 +36,13 @@ abstract class Quaternion[T: Numeric, F: Fractional, Q <: Quaternion[T, F, Q, P]
 
   protected def quaternion(a: T, b: T, c: T, e: T): Q
 
-  protected def quaternion(a: T): Q = quaternion(a, implicitly[Numeric[T]].zero, implicitly[Numeric[T]].zero, implicitly[Numeric[T]].zero)
+  protected def quaternion(a: T): Q =
+    quaternion(a, implicitly[Numeric[T]].zero, implicitly[Numeric[T]].zero, implicitly[Numeric[T]].zero)
 
   protected def promote(a: F, b: F, c: F, d: F): P
 
-  protected def promote(a: F): P = promote(a, implicitly[Numeric[F]].zero, implicitly[Numeric[F]].zero, implicitly[Numeric[F]].zero)
+  protected def promote(a: F): P =
+    promote(a, implicitly[Numeric[F]].zero, implicitly[Numeric[F]].zero, implicitly[Numeric[F]].zero)
 
   protected def promote: P
 
@@ -176,7 +179,10 @@ abstract class Quaternion[T: Numeric, F: Fractional, Q <: Quaternion[T, F, Q, P]
   def /(that: T): Q = quaternion(divide(a, that), divide(b, that), divide(c, that), divide(d, that))
 
   def \(that: F): P =
-    promote(fdivide(fractional(a), that), fdivide(fractional(b), that), fdivide(fractional(c), that), fdivide(fractional(d), that))
+    promote(fdivide(fractional(a), that),
+            fdivide(fractional(b), that),
+            fdivide(fractional(c), that),
+            fdivide(fractional(d), that))
 
   def /(that: Int): Q = {
     val n = implicitly[Numeric[T]].fromInt(that)
@@ -205,7 +211,7 @@ abstract class Quaternion[T: Numeric, F: Fractional, Q <: Quaternion[T, F, Q, P]
       def imag(v: T, basis: Char): Unit =
         if (v != zerot) {
           if (v == onet) {
-            if (buf nonEmpty)
+            if (buf.nonEmpty)
               buf += '+'
 
             buf += basis
@@ -214,7 +220,7 @@ abstract class Quaternion[T: Numeric, F: Fractional, Q <: Quaternion[T, F, Q, P]
           else if (implicitly[Numeric[T]].lt(v, zerot))
             buf ++= s"$v$basis"
           else {
-            if (buf nonEmpty)
+            if (buf.nonEmpty)
               buf += '+'
 
             buf ++= s"$v$basis"

@@ -5,8 +5,8 @@ lazy val numbers = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .in(file("."))
   .settings(
     name := "numbers",
-    version := "0.1.1",
-    scalaVersion := "2.13.6",
+    version := "0.1.2",
+    scalaVersion := "3.1.1",
     scalacOptions ++=
       Seq(
         "-deprecation",
@@ -16,18 +16,17 @@ lazy val numbers = crossProject(JSPlatform, JVMPlatform, NativePlatform)
         "-language:implicitConversions",
         "-language:existentials",
         "-language:dynamics",
-        "-Xasync"
       ),
     organization := "io.github.edadma",
     githubOwner := "edadma",
     githubRepository := "numbers",
     mainClass := Some(s"${organization.value}.${name.value}.Main"),
-    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.9" % "test",
+//    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.11" % "test",
     publishMavenStyle := true,
     Test / publishArtifact := false
   )
   .jvmSettings(
-    libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.0.0" % "provided",
+    libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.1.0" % "provided",
   )
   .nativeSettings(
     nativeLinkStubs := true
