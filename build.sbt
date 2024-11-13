@@ -5,8 +5,8 @@ lazy val numbers = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .in(file("."))
   .settings(
     name := "numbers",
-    version := "0.1.2",
-    scalaVersion := "3.1.1",
+    version := "0.1.3",
+    scalaVersion := "3.5.2",
     scalacOptions ++=
       Seq(
         "-deprecation",
@@ -29,7 +29,6 @@ lazy val numbers = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.1.0" % "provided",
   )
   .nativeSettings(
-    nativeLinkStubs := true
   )
   .jsSettings(
     jsEnv := new org.scalajs.jsenv.nodejs.NodeJSEnv(),
