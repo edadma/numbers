@@ -148,7 +148,7 @@ abstract class Complex[T: Numeric, F: Fractional, C <: Complex[T, F, C, P], P <:
 
   override def equals(o: Any): Boolean =
     o match {
-      case z: Complex[T, F, C, P] => re == z.re && im == z.im
+      case z: Complex[T, F, C, P] @unchecked => re == z.re && im == z.im
       case _                      => false
     }
 

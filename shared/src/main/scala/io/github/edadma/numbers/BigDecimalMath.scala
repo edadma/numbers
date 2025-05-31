@@ -1,8 +1,8 @@
 package io.github.edadma.numbers
 
-import java.math.{RoundingMode, MathContext}
-
-import math._
+import java.math.{MathContext, RoundingMode}
+import math.*
+import scala.annotation.tailrec
 
 class BigDecimalMath(val mc: MathContext) {
 
@@ -94,7 +94,7 @@ class BigDecimalMath(val mc: MathContext) {
 
   private def compute_pi = {
     var a = ONE.v
-    var b = inv(BigDecimalMath.sqrt(TWO.v)(this))
+    var b = inv(BigDecimalMath.sqrt(TWO.v)(using this))
     var t = QUARTER.v
     var x = 1
 
@@ -102,7 +102,7 @@ class BigDecimalMath(val mc: MathContext) {
       val y = a
 
       a = (a + b) / TWO.v
-      b = BigDecimalMath.sqrt(b * y)(this)
+      b = BigDecimalMath.sqrt(b * y)(using this)
       t = t - BigDecimal(x) * xx(y - a)
       x <<= 1
     }
@@ -136,7 +136,7 @@ object BigDecimalMath {
     implicit val bdmath: BigDecimalMath = new BigDecimalMath(MathContext.DECIMAL128)
   }
 
-  def ln(x: BigDecimal)(implicit bdmath: BigDecimalMath) = {
+  def ln(x: BigDecimal)(implicit bdmath: BigDecimalMath): BigDecimal = {
     val p = bdmath.mc.getPrecision * math.log(10) / LN2D
     val m = ceil(p / 2 - math.log(x.toDouble) / LN2D).toInt
     val s = x * bdmath.TWO.v.pow(m)
@@ -144,11 +144,12 @@ object BigDecimalMath {
     bdmath.Pi.v / (bdmath.TWO.v * agm(bdmath.ONE.v, bdmath.FOUR.v / s)) - m * bdmath.LN2.v
   }
 
-  def agm(x: BigDecimal, y: BigDecimal)(implicit bdmath: BigDecimalMath) = {
+  def agm(x: BigDecimal, y: BigDecimal)(implicit bdmath: BigDecimalMath): BigDecimal = {
     def am(a: BigDecimal, b: BigDecimal) = (a + b) / 2
 
     def gm(a: BigDecimal, b: BigDecimal) = sqrt(a * b)
 
+    @tailrec
     def recur(an: BigDecimal, gn: BigDecimal): BigDecimal = {
       val anp1 = am(an, gn)
       val gnp1 = gm(an, gn)
@@ -162,7 +163,7 @@ object BigDecimalMath {
     recur(am(x, y), gm(x, y))
   }
 
-  def sqrt(x: BigDecimal)(implicit bdmath: BigDecimalMath) = {
+  def sqrt(x: BigDecimal)(implicit bdmath: BigDecimalMath): BigDecimal = {
     var new_guess = x / bdmath.TWO.v
     var current_guess = x
 
@@ -174,7 +175,7 @@ object BigDecimalMath {
     new_guess
   }
 
-  def exp(a: BigDecimal)(implicit bdmath: BigDecimalMath) = {
+  def exp(a: BigDecimal)(implicit bdmath: BigDecimalMath): BigDecimal = {
     val x_ = a
     var result = x_ + bdmath.ONE.v
     var n = x_
@@ -193,16 +194,16 @@ object BigDecimalMath {
     result.round(bdmath.mc)
   }
 
-  def log(b: BigDecimal, x: BigDecimal)(implicit bdmath: BigDecimalMath) =
+  def log(b: BigDecimal, x: BigDecimal)(implicit bdmath: BigDecimalMath): BigDecimal =
     ln(x) / ln(b)
 
-  def pow(x: BigDecimal, y: BigDecimal)(implicit bdmath: BigDecimalMath) =
+  def pow(x: BigDecimal, y: BigDecimal)(implicit bdmath: BigDecimalMath): BigDecimal =
     exp(y * ln(x))
 
-  def pow(x: BigDecimal, y: Double)(implicit bdmath: BigDecimalMath) =
+  def pow(x: BigDecimal, y: Double)(implicit bdmath: BigDecimalMath): BigDecimal =
     exp(bdmath.bigDecimal(y) * ln(x))
 
-  def sin(a: BigDecimal)(implicit bdmath: BigDecimalMath) = {
+  def sin(a: BigDecimal)(implicit bdmath: BigDecimalMath): BigDecimal = {
     var term = a
     val x2 = bdmath.xx(a)
     var n = term
@@ -230,7 +231,7 @@ object BigDecimalMath {
     result.round(bdmath.mc)
   }
 
-  def cos(a: BigDecimal)(implicit bdmath: BigDecimalMath) = {
+  def cos(a: BigDecimal)(implicit bdmath: BigDecimalMath): BigDecimal = {
     var term = bdmath.ONE.v
     val x2 = bdmath.xx(a)
     var n = term
@@ -258,7 +259,7 @@ object BigDecimalMath {
     result.round(bdmath.mc)
   }
 
-  def acos(a: BigDecimal)(implicit bdmath: BigDecimalMath) = {
+  def acos(a: BigDecimal)(implicit bdmath: BigDecimalMath): BigDecimal = {
     var a_ = bdmath.ZERO.v
     var x1 = a
     var halves = bdmath.ONE.v
@@ -280,10 +281,10 @@ object BigDecimalMath {
     bdmath.Pi.v / 2 - acos(a)
   }
 
-  def atan(a: BigDecimal)(implicit bdmath: BigDecimalMath) =
+  def atan(a: BigDecimal)(implicit bdmath: BigDecimalMath): BigDecimal =
     a.signum * acos(bdmath.inv(sqrt(bdmath.xx(a) + bdmath.ONE.v)))
 
-  def atan2(y: BigDecimal, x: BigDecimal)(implicit bdmath: BigDecimalMath) =
+  def atan2(y: BigDecimal, x: BigDecimal)(implicit bdmath: BigDecimalMath): BigDecimal =
     if (x > 0)
       atan(y / x)
     else if (y >= 0 && x < 0)
@@ -297,7 +298,7 @@ object BigDecimalMath {
     else
       bdmath.bigDecimal(0)
 
-  def atanh(x: BigDecimal)(implicit bdmath: BigDecimalMath) =
+  def atanh(x: BigDecimal)(implicit bdmath: BigDecimalMath): BigDecimal =
     (ln(bdmath.ONE.v + x) - ln(bdmath.ONE.v - x)) / bdmath.TWO.v
 
 }
