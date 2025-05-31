@@ -5,7 +5,6 @@
 [![Scala 3](https://img.shields.io/badge/Scala-3.7.0-red.svg)](https://scala-lang.org/)
 ![ScalaJS Version](https://img.shields.io/badge/Scala.js-1.19.0-blue.svg)
 ![Scala Native Version](https://img.shields.io/badge/Scala_Native-5.7-blue.svg)
-[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 
 A comprehensive Scala 3 library providing high-precision mathematical number types including rational numbers, complex numbers, and quaternions with support for arbitrary precision arithmetic.
 
