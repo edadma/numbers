@@ -20,8 +20,6 @@ lazy val numbers = crossProject(JSPlatform, JVMPlatform, NativePlatform)
         "-language:dynamics",
       ),
     organization := "io.github.edadma",
-    githubOwner := "edadma",
-    githubRepository := "numbers",
     mainClass := Some(s"${organization.value}.${name.value}.Main"),
 //    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.11" % "test",
     publishMavenStyle := true,
