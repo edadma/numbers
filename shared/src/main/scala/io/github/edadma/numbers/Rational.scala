@@ -10,7 +10,7 @@ class Rational(_n: BigInt, _d: BigInt) extends Number with Ordered[Rational] {
   require(_d != ZERObi, "denominator can't be zero")
 
   val (n, d) = {
-    val g = _n gcd _d
+    val g    = _n gcd _d
     val sign = _d.signum
 
     (_n / g * sign, _d / g * sign)
@@ -23,7 +23,7 @@ class Rational(_n: BigInt, _d: BigInt) extends Number with Ordered[Rational] {
   def maybeDemote: Number =
     if (isInt)
       if (n.isValidInt)
-        Integer valueOf n.toInt
+        Integer.valueOf(n.toInt)
       else
         n
     else
@@ -145,12 +145,12 @@ class Rational(_n: BigInt, _d: BigInt) extends Number with Ordered[Rational] {
 }
 
 object Rational {
-  private val ZERObi = BigInt(0)
-  private val ONEbi = BigInt(1)
+  private val ZERObi   = BigInt(0)
+  private val ONEbi    = BigInt(1)
   private val RATIONAL = """(-?\d+)/(\d+)""" r
 
   lazy val ZERO: Rational = Rational(0)
-  lazy val ONE: Rational = Rational(1)
+  lazy val ONE: Rational  = Rational(1)
 
   def oneOver(d: BigInt) = new Rational(ONEbi, d)
 
@@ -211,6 +211,6 @@ trait RationalIsFractional extends Fractional[Rational] {
 
   def toDouble(x: Rational): Double = x.doubleValue
 
-  def compare(x: Rational, y: Rational): Int = x compare y
+  def compare(x: Rational, y: Rational): Int = x.compare(y)
 
 }
