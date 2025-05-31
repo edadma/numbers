@@ -57,7 +57,7 @@ lazy val numbers = crossProject(JSPlatform, JVMPlatform, NativePlatform)
         "-language:dynamics",
       ),
     organization := "io.github.edadma",
-//    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.19" % "test",
+    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.19" % "test",
     publishMavenStyle := true,
     Test / publishArtifact := false
   )
