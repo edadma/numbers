@@ -1,49 +1,61 @@
 package io.github.edadma.numbers
 
 import java.math.MathContext
+import math.*
+import scala.language.implicitConversions
 
-import math._
-
-class Rational(_n: BigInt, _d: BigInt) extends Number with Ordered[Rational] {
+class Rational(n: BigInt, d: BigInt) extends Number with Ordered[Rational] {
   import Rational._
 
-  require(_d != ZERObi, "denominator can't be zero")
+  require(d != ZERObi, "denominator can't be zero")
 
-  val (n, d) = {
-    val g    = _n gcd _d
-    val sign = _d.signum
+  val (numerator, denominator) = {
+    val g    = n gcd d
+    val sign = d.signum
 
-    (_n / g * sign, _d / g * sign)
+    (n / g * sign, d / g * sign)
   }
 
-  def isZero: Boolean = n == ZERObi
+  def isZero: Boolean = numerator == ZERObi
 
-  def isInt: Boolean = d == ONEbi
+  def nonZero: Boolean = numerator != ZERObi
 
   def maybeDemote: Number =
-    if (isInt)
-      if (n.isValidInt)
-        Integer.valueOf(n.toInt)
+    if (isWhole)
+      if (numerator.isValidInt)
+        Integer.valueOf(numerator.toInt)
       else
-        n
+        numerator
     else
       this
 
-  def +(that: Rational): Rational = Rational(n * that.d + that.n * d, d * that.d)
+  def signum: Int = numerator.signum
 
-  def +(that: BigInt): Rational = Rational(n + that * d, d)
+  def isPositive: Boolean = numerator > ZERObi
 
-  def *(that: Rational): Rational = Rational(n * that.n, d * that.d)
+  def isNegative: Boolean = numerator < ZERObi
 
-  def *(that: BigInt): Rational = Rational(n * that, d)
+  def isWhole: Boolean = denominator == ONEbi
 
-  def -(that: Rational): Rational = Rational(n * that.d - that.n * d, d * that.d)
+  def +(that: Rational): Rational =
+    Rational(numerator * that.denominator + that.numerator * denominator, denominator * that.denominator)
 
-  def -(that: BigInt): Rational = Rational(n - that * d, d)
+  def +(that: BigInt): Rational = Rational(numerator + that * denominator, denominator)
 
-  def /(that: Rational): Rational = Rational(n * that.d, d * that.n)
+  def *(that: Rational): Rational = Rational(numerator * that.numerator, denominator * that.denominator)
 
-  def /(that: BigInt): Rational = Rational(n, d * that)
+  def *(that: BigInt): Rational = Rational(numerator * that, denominator)
+
+  def -(that: Rational): Rational =
+    Rational(numerator * that.denominator - that.numerator * denominator, denominator * that.denominator)
+
+  def -(that: BigInt): Rational = Rational(numerator - that * denominator, denominator)
+
+  def /(that: Rational): Rational =
+    if (that.isZero) sys.error("division by zero")
+    Rational(numerator * that.denominator, denominator * that.numerator)
+
+  def /(that: BigInt): Rational = Rational(numerator, denominator * that)
 
   def ^(that: Int): Rational = {
     def _pow(b: Rational, e: Int): Rational =
@@ -89,65 +101,69 @@ class Rational(_n: BigInt, _d: BigInt) extends Number with Ordered[Rational] {
       _pow(this, that)
   }
 
-  def unary_- : Rational = Rational(-n, d)
+  def unary_- : Rational = Rational(-numerator, denominator)
 
   def inv: Rational =
     if (isZero)
       sys.error("no inverse")
     else
-      Rational(d, n)
+      Rational(denominator, numerator)
 
-  def abs: Rational = if (n > ZERObi) this else new Rational(n.abs, d.abs)
+  def abs: Rational = if (numerator > ZERObi) this else new Rational(numerator.abs, denominator.abs)
 
   def floor: Rational = {
-    val rem = n.abs mod d
+    val rem = numerator.abs mod denominator
 
-    Rational(if (n > ZERObi) n - rem else n - d + rem, d)
+    Rational(if (numerator > ZERObi) numerator - rem else numerator - denominator + rem, denominator)
   }
 
   def ceil: Rational = {
-    val rem = n.abs mod d
+    val rem = numerator.abs mod denominator
 
-    Rational(if (n < ZERObi) n + rem else n + d - rem, d)
+    Rational(if (numerator < ZERObi) numerator + rem else numerator + denominator - rem, denominator)
   }
 
-  def decimalValue(mc: MathContext): BigDecimal = BigDecimal(n, mc) / BigDecimal(d, mc)
+  def toMixedNumber: (BigInt, Rational) = (numerator / denominator, Rational(numerator % denominator, denominator))
+
+  def mediant(that: Rational): Rational = Rational(numerator + that.numerator, denominator + that.denominator)
+
+  def decimalValue(mc: MathContext): BigDecimal = BigDecimal(numerator, mc) / BigDecimal(denominator, mc)
 
   def doubleValue: Double =
-    if (n.isValidDouble && d.isValidDouble)
-      n.toDouble / d.toDouble
+    if (numerator.isValidDouble && denominator.isValidDouble)
+      numerator.toDouble / denominator.toDouble
     else
-      (BigDecimal(n) / BigDecimal(d)).toDouble
+      (BigDecimal(numerator) / BigDecimal(denominator)).toDouble
 
   def floatValue: Float =
-    if (n.isValidFloat && d.isValidFloat)
-      n.toFloat / d.toFloat
+    if (numerator.isValidFloat && denominator.isValidFloat)
+      numerator.toFloat / denominator.toFloat
     else
-      (BigDecimal(n) / BigDecimal(d)).toFloat
+      (BigDecimal(numerator) / BigDecimal(denominator)).toFloat
 
-  def intValue: Int = (n / d).toInt
+  def intValue: Int = (numerator / denominator).toInt
 
-  def longValue: Long = (n / d).toLong
+  def longValue: Long = (numerator / denominator).toLong
 
-  def compare(that: Rational): Int = (n * that.d).compare(that.n * d)
+  def compare(that: Rational): Int = (numerator * that.denominator).compare(that.numerator * denominator)
 
   override def equals(x: Any): Boolean =
     x match {
-      case r: Rational => n == r.n && d == r.d
-      case bi: BigInt  => isInt && n == bi
-      case l: Long     => isInt && n == l
-      case i: Int      => isInt && n == i
+      case r: Rational => numerator == r.numerator && denominator == r.denominator
+      case bi: BigInt  => isWhole && numerator == bi
+      case l: Long     => isWhole && numerator == l
+      case i: Int      => isWhole && numerator == i
       case _           => false
     }
 
   override def toString: String =
-    if (isZero) "0" else if (isInt) n.toString else s"$n/$d"
+    if (isZero) "0" else if (isWhole) numerator.toString else s"$numerator/$denominator"
 }
 
 object Rational {
   private val ZERObi   = BigInt(0)
   private val ONEbi    = BigInt(1)
-  private val RATIONAL = """(-?\d+)/(\d+)""" r
+  private val RATIONAL = """\s*(-?\d+)\s*/\s*(\d+)\s*""".r
 
   lazy val ZERO: Rational = Rational(0)
   lazy val ONE: Rational  = Rational(1)
@@ -170,7 +186,7 @@ object Rational {
 
   def unapply(z: Any): Option[(BigInt, BigInt)] =
     z match {
-      case r: Rational => Some(r.n, r.d)
+      case r: Rational => Some(r.numerator, r.denominator)
       case _           => None
     }
 
@@ -199,7 +215,9 @@ trait RationalIsFractional extends Fractional[Rational] {
 
   def negate(x: Rational): Rational = -x
 
-  def parseString(s: String): Option[Rational] = Some(Rational(s))
+  def parseString(s: String): Option[Rational] =
+    try Some(Rational(s))
+    catch { case _: Exception => None }
 
   def fromInt(x: Int): Rational = x
 
