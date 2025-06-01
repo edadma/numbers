@@ -135,16 +135,31 @@ abstract class Complex[T: Numeric, F: Fractional, C <: Complex[T, F, C, P], P <:
   def -(that: Int): C = complex(re - implicitly[Numeric[T]].fromInt(that), im)
 
   def /(that: Complex[T, F, C, P]): C =
-    complex(divide(re * that.re + im * that.im, that.norm), divide(im * that.re - re * that.im, that.norm))
+    val denominatorNorm = that.norm
 
-  def /(that: T): C = complex(divide(re, that), divide(im, that))
+    if (denominatorNorm == implicitly[Numeric[T]].zero) sys.error("division by zero")
+    complex(
+      divide(re * that.re + im * that.im, denominatorNorm),
+      divide(im * that.re - re * that.im, denominatorNorm),
+    )
+
+  def /(that: T): C =
+    if (that == implicitly[Numeric[T]].zero) sys.error("division by zero")
+    complex(divide(re, that), divide(im, that))
 
   def /(that: Int): C =
-    complex(divide(re, implicitly[Numeric[T]].fromInt(that)), divide(im, implicitly[Numeric[T]].fromInt(that)))
+    val thatT = implicitly[Numeric[T]].fromInt(that)
+
+    if (thatT == implicitly[Numeric[T]].zero) sys.error("division by zero")
+    complex(divide(re, thatT), divide(im, thatT))
 
   def unary_- : C = complex(-re, -im)
 
-  def inverse: C = conj / norm
+  def inverse: C =
+    val n = norm
+
+    if (n == implicitly[Numeric[T]].zero) sys.error("division by zero")
+    conj / n
 
   override def equals(o: Any): Boolean =
     o match {

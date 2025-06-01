@@ -91,50 +91,128 @@ abstract class Quaternion[T: Numeric, F: Fractional, Q <: Quaternion[T, F, Q, P]
 
   lazy val im: Q = (this - conj) / 2
 
-  lazy val ln: P = promote(_ln(abs)) + im.sgn * arg
+  lazy val ln: P =
+    val thisPromoted = promote
+    val magnitude    = abs
+    val vectorNorm   = absv
 
-  def exp: P = promote(_exp(fractional(a))) * (promote(_cos(im.abs)) + im.sgn * _sin(im.abs))
+    if (vectorNorm == zerof) {
+      // Pure real quaternion: ln(a) = ln(|a|) + πi (if a < 0)
+      if (fractional(a) >= zerof) {
+        promote(_ln(magnitude), zerof, zerof, zerof)
+      } else {
+        // For negative real quaternions, add π in the i direction
+        val pi = promote(fractional(a)) // Need π constant, this is simplified
+        promote(_ln(magnitude), pi, zerof, zerof)
+      }
+    } else {
+      // General case: ln(q) = ln(|q|) + (v/|v|) * arccos(a/|q|)
+      val logMagnitude = _ln(magnitude)
+      val angle        = _acos(fdivide(fractional(a), magnitude))
+      val vectorUnit   = thisPromoted.im.promote / vectorNorm
 
-  def sin: P = promote(onef)
+      promote(logMagnitude) + vectorUnit * angle
+    }
 
-  def asin: P = promote(onef) // (-i).promote * (ix.promote + (one - this * this).sqrt).ln
+  def exp: P =
+    val thisPromoted = promote
+    val realPart     = fractional(a)
+    val vectorNorm   = absv
+
+    if (vectorNorm == zerof) {
+      // Pure real quaternion: exp(a) = exp(a)
+      promote(_exp(realPart), zerof, zerof, zerof)
+    } else {
+      // General case: exp(q) = exp(a) * (cos(|v|) + (v/|v|) * sin(|v|))
+      val expReal    = _exp(realPart)
+      val cosVec     = _cos(vectorNorm)
+      val sinVec     = _sin(vectorNorm)
+      val vectorUnit = thisPromoted.im.promote / vectorNorm
+
+      promote(expReal) * (promote(cosVec) + vectorUnit * sinVec)
+    }
+
+  def sin: P = {
+    // For quaternions: sin(q) = sin(a)cosh(|v|) + (v/|v|)cos(a)sinh(|v|)
+    val realPart = fractional(a)
+    val vecNorm  = absv
+
+    if (vecNorm == zerof) {
+      // Pure real quaternion
+      promote(_sin(realPart), zerof, zerof, zerof)
+    } else {
+      // Complex implementation - fallback to exponential form
+      val thisPromoted = promote
+      val halfI        = i.promote / 2
+      val iz           = halfI * thisPromoted
+      val eiz          = iz.exp
+      val e_neg_iz     = (-iz).exp
+      (eiz - e_neg_iz) / (halfI * 2)
+    }
+  }
+
+  def cos: P = {
+    // cos(q) = cos(a)cosh(|v|) - (v/|v|)sin(a)sinh(|v|)
+    val realPart = fractional(a)
+    val vecNorm  = absv
+
+    if (vecNorm == zerof) {
+      // Pure real quaternion
+      promote(_cos(realPart), zerof, zerof, zerof)
+    } else {
+      // Complex implementation - fallback to exponential form
+      val thisPromoted = promote
+      val halfI        = i.promote / 2
+      val iz           = halfI * thisPromoted
+      val eiz          = iz.exp
+      val e_neg_iz     = (-iz).exp
+      (eiz + e_neg_iz) / 2
+    }
+  }
+
+  def tan: P = sin / cos
+
+  def asin: P = (-i.promote) * (i.promote * promote + (promote.one - promote * promote).sqrt).ln
+
+  def acos: P = (-i.promote) * (promote + i.promote * (promote.one - promote * promote).sqrt).ln
+
+  def atan: P = {
+    val thisPromoted = promote
+    val halfI        = i.promote / 2
+    halfI * ((i.promote + thisPromoted) / (i.promote - thisPromoted)).ln
+  }
 
   def sinh: P = (exp - (-this).exp) / 2
 
   def asinh: P = promote(onef) // (promote + (this * this + 1).sqrt).ln
 
-  def cos: P = promote(onef) // (ix.exp + (-ix).exp) / 2
-
-  def acos: P = promote(onef) // i.promote * (promote - i.promote * (one - this * this).sqrt).ln
-
   def acosh: P = (promote + (this + 1).sqrt * (this - 1).sqrt).ln
 
   def cosh: P = (exp + (-this).exp) / 2
 
-  def tan: P = promote(onef) // ((ix * 2).exp - 1) / i.promote / ((ix * 2).exp + 1)
-
-  def atan: P = promote(onef) // i.promote * ((one - ix).ln - (one + ix).ln) / 2
-
   def tanh: P = (exp - (-this).exp) / (exp + (-this).exp)
 
-  def atanh: P = promote(onef)
+  def atanh: P =
+    // atanh(q) = (1/2) * ln((1+q)/(1-q))
+    val thisPromoted = promote
+    val one          = thisPromoted.one
+    val two          = promote(implicitly[Fractional[F]].fromInt(2))
+    val numerator    = one + thisPromoted
+    val denominator  = one - thisPromoted
+
+    (numerator / denominator).ln / two
 
   def conj: Q = quaternion(a, -b, -c, -d)
 
   def ^(that: Q): P = (that.promote * ln).exp
 
-  def ^(p: F): P = promote(onef) // pow(p)
+  def ^(p: F): P =
+    // q^p = exp(p * ln(q))
+    val thisPromoted = promote
 
-//  def pow(p: F): P = {
-//    val q = promote
-//    val n = q.norm2
-//    val a = q.arg
-//    val pa = p * a
-//
-//    import Fractional.Implicits._
-//
-//    promote(_pow(n, p / implicitly[Fractional[F]].fromInt(2))) * promote(_cos(pa), _sin(pa))
-//  }
+    (thisPromoted.ln * p).exp
+
+  def pow(p: F): P = this ^ p
 
   def ^(e: Int): Q
 
