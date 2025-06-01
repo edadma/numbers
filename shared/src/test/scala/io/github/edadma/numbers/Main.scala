@@ -8,5 +8,6 @@ package io.github.edadma.numbers
   val quotient = product / q2
 
   println(q1)
+  println(product)
   println(quotient)
 }
