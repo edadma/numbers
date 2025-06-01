@@ -194,7 +194,7 @@ abstract class Quaternion[T: Numeric, F: Fractional, Q <: Quaternion[T, F, Q, P]
       a * that.a - b * that.b - c * that.c - d * that.d,
       a * that.b + b * that.a + c * that.d - d * that.c,
       a * that.c - b * that.d + c * that.a + d * that.b,
-      a * that.d + b * that.c - c * that.b - d * that.a,
+      a * that.d + b * that.c - c * that.b + d * that.a,
     )
 
   def *(that: T): Q = quaternion(a * that, b * that, c * that, d * that)
@@ -217,7 +217,7 @@ abstract class Quaternion[T: Numeric, F: Fractional, Q <: Quaternion[T, F, Q, P]
     quaternion(a - n, b - n, c - n, d - n)
   }
 
-  def /(that: Q): Q = that * inverse
+  def /(that: Q): Q = this * inverse
 
   def /(that: T): Q = quaternion(divide(a, that), divide(b, that), divide(c, that), divide(d, that))
 
