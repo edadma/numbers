@@ -2,7 +2,8 @@ package io.github.edadma.numbers
 
 import math._
 
-case class QuaternionDouble(a: Double, b: Double, c: Double, d: Double) extends AbstractQuaternionRational[Double, QuaternionDouble] {
+case class QuaternionDouble(a: Double, b: Double, c: Double, d: Double)
+    extends AbstractQuaternionRational[Double, QuaternionDouble] {
 
   protected def fractional(a: Double): Double = a
 
@@ -29,17 +30,17 @@ case class QuaternionDouble(a: Double, b: Double, c: Double, d: Double) extends 
   def roughly(x: Double, y: Double): Boolean = (x - y).abs < 1e-13
 
   def roughly(that: QuaternionDouble): Boolean =
-    roughly(a, that.a) && roughly(b, that.b)
+    roughly(a, that.a) && roughly(b, that.b) && roughly(c, that.c) && roughly(d, that.d)
 
   def nearly(x: Double, y: Double): Boolean = (x - y).abs < 1e-15
 
   override def equals(o: Any): Boolean =
     o match {
-      case r: QuaternionDouble => nearly(b, r.b) && nearly(a, r.a)
-      case r: Int              => nearly(b, 0) && nearly(a, r)
-      case r: Double           => nearly(b, 0) && nearly(a, r)
+      case r: QuaternionDouble => nearly(a, r.a) && nearly(b, r.b) && nearly(c, r.c) && nearly(d, r.d)
+      case r: Int              => nearly(b, 0) && nearly(c, 0) && nearly(d, 0) && nearly(a, r)
+      case r: Double           => nearly(b, 0) && nearly(c, 0) && nearly(d, 0) && nearly(a, r)
       case _: BigInt | _: BigDecimal | _: Rational =>
-        nearly(b, 0) && nearly(a, o.asInstanceOf[Number].doubleValue)
+        nearly(b, 0) && nearly(c, 0) && nearly(d, 0) && nearly(a, o.asInstanceOf[Number].doubleValue)
       case _ => false
     }
 

@@ -26,8 +26,8 @@ class ComplexBigInt(val re: BigInt, val im: BigInt) extends AbstractComplexRatio
 
   override def equals(o: Any): Boolean =
     o match {
-      case r: Int           => re == 0 && re == r
-      case r: BigInt        => re == 0 && re == r
+      case r: Int           => im == 0 && re == r
+      case r: BigInt        => im == 0 && re == r
       case z: ComplexBigInt => re == z.re && im == z.im
       case _                => false
     }

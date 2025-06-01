@@ -102,7 +102,7 @@ abstract class Complex[T: Numeric, F: Fractional, C <: Complex[T, F, C, P], P <:
     val c = promote
     val n = c.norm
     //		val lnn = _ln( n )
-    val a = c.arg
+    val a  = c.arg
     val pa = p * a
 
     import Fractional.Implicits._
@@ -149,14 +149,14 @@ abstract class Complex[T: Numeric, F: Fractional, C <: Complex[T, F, C, P], P <:
   override def equals(o: Any): Boolean =
     o match {
       case z: Complex[T, F, C, P] @unchecked => re == z.re && im == z.im
-      case _                      => false
+      case _                                 => false
     }
 
   override def hashCode: Int = re.hashCode ^ im.hashCode
 
   override def toString: String = {
     val zero = implicitly[Numeric[T]].zero
-    val one = implicitly[Numeric[T]].one
+    val one  = implicitly[Numeric[T]].one
 
     if (im == zero)
       re.toString
@@ -172,7 +172,7 @@ abstract class Complex[T: Numeric, F: Fractional, C <: Complex[T, F, C, P], P <:
     else if (im == -one)
       s"$re-i"
     else if (implicitly[Numeric[T]].lt(im, zero))
-      s"$re+${im}i"
+      s"$re${im}i"
     else
       s"$re+${im}i"
   }
