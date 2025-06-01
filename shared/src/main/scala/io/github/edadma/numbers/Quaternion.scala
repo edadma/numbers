@@ -217,7 +217,7 @@ abstract class Quaternion[T: Numeric, F: Fractional, Q <: Quaternion[T, F, Q, P]
     quaternion(a - n, b - n, c - n, d - n)
   }
 
-  def /(that: Q): Q = this * inverse
+  def /(that: Q): Q = this * that.inverse
 
   def /(that: T): Q = quaternion(divide(a, that), divide(b, that), divide(c, that), divide(d, that))
 
@@ -247,38 +247,75 @@ abstract class Quaternion[T: Numeric, F: Fractional, Q <: Quaternion[T, F, Q, P]
 
   override def hashCode: Int = a.hashCode ^ b.hashCode ^ c.hashCode ^ d.hashCode
 
-  override def toString: String =
+//  override def toString: String =
+//    if (this == zero)
+//      "0"
+//    else {
+//      val buf = new StringBuilder
+//
+//      def imag(v: T, basis: Char): Unit =
+//        if (v != zerot) {
+//          if (v == onet) {
+//            if (buf.nonEmpty)
+//              buf += '+'
+//
+//            buf += basis
+//          } else if (v == -onet)
+//            buf ++= s"-$basis"
+//          else if (implicitly[Numeric[T]].lt(v, zerot))
+//            buf ++= s"$v$basis"
+//          else {
+//            if (buf.nonEmpty)
+//              buf += '+'
+//
+//            buf ++= s"$v$basis"
+//          }
+//        }
+//
+//      if (a != zerot)
+//        buf ++= a.toString
+//
+//      imag(b, 'i')
+//      imag(c, 'j')
+//      imag(d, 'k')
+//      buf.toString
+//    }
+
+  override def toString: String = {
+    def formatDouble(d: Double): String = {
+      if (d == d.toInt.toDouble) d.toInt.toString
+      else d.toString
+    }
+
     if (this == zero)
       "0"
     else {
       val buf = new StringBuilder
 
-      def imag(v: T, basis: Char): Unit =
-        if (v != zerot) {
-          if (v == onet) {
+      def imag(v: Double, basis: Char): Unit =
+        if (v != 0.0) {
+          if (v == 1.0) {
             if (buf.nonEmpty)
               buf += '+'
-
             buf += basis
-          } else if (v == -onet)
+          } else if (v == -1.0)
             buf ++= s"-$basis"
-          else if (implicitly[Numeric[T]].lt(v, zerot))
-            buf ++= s"$v$basis"
+          else if (v < 0.0)
+            buf ++= s"${formatDouble(v)}$basis"
           else {
             if (buf.nonEmpty)
               buf += '+'
-
-            buf ++= s"$v$basis"
+            buf ++= s"${formatDouble(v)}$basis"
           }
         }
 
-      if (a != zerot)
-        buf ++= a.toString
+      if (a != 0.0)
+        buf ++= formatDouble(a)
 
       imag(b, 'i')
       imag(c, 'j')
       imag(d, 'k')
       buf.toString
     }
-
+  }
 }
