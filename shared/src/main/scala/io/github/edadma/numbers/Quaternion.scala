@@ -91,46 +91,9 @@ abstract class Quaternion[T: Numeric, F: Fractional, Q <: Quaternion[T, F, Q, P]
 
   lazy val im: Q = (this - conj) / 2
 
-  lazy val ln: P =
-    val thisPromoted = promote
-    val magnitude    = abs
-    val vectorNorm   = absv
+  lazy val ln: P = promote(_ln(abs)) + im.sgn * arg
 
-    if (vectorNorm == zerof) {
-      // Pure real quaternion: ln(a) = ln(|a|) + πi (if a < 0)
-      if (fractional(a) >= zerof) {
-        promote(_ln(magnitude), zerof, zerof, zerof)
-      } else {
-        // For negative real quaternions, add π in the i direction
-        val pi = promote(fractional(a)) // Need π constant, this is simplified
-        promote(_ln(magnitude), pi, zerof, zerof)
-      }
-    } else {
-      // General case: ln(q) = ln(|q|) + (v/|v|) * arccos(a/|q|)
-      val logMagnitude = _ln(magnitude)
-      val angle        = _acos(fdivide(fractional(a), magnitude))
-      val vectorUnit   = thisPromoted.im.promote / vectorNorm
-
-      promote(logMagnitude) + vectorUnit * angle
-    }
-
-  def exp: P =
-    val thisPromoted = promote
-    val realPart     = fractional(a)
-    val vectorNorm   = absv
-
-    if (vectorNorm == zerof) {
-      // Pure real quaternion: exp(a) = exp(a)
-      promote(_exp(realPart), zerof, zerof, zerof)
-    } else {
-      // General case: exp(q) = exp(a) * (cos(|v|) + (v/|v|) * sin(|v|))
-      val expReal    = _exp(realPart)
-      val cosVec     = _cos(vectorNorm)
-      val sinVec     = _sin(vectorNorm)
-      val vectorUnit = thisPromoted.im.promote / vectorNorm
-
-      promote(expReal) * (promote(cosVec) + vectorUnit * sinVec)
-    }
+  def exp: P = promote(_exp(fractional(a))) * (promote(_cos(im.abs)) + im.sgn * _sin(im.abs))
 
   def sin: P = {
     // For quaternions: sin(q) = sin(a)cosh(|v|) + (v/|v|)cos(a)sinh(|v|)
