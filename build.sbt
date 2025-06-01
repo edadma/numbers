@@ -5,7 +5,7 @@ ThisBuild / scalaVersion           := "3.7.0"
 ThisBuild / organization           := "io.github.edadma"
 ThisBuild / organizationName       := "edadma"
 ThisBuild / organizationHomepage   := Some(url("https://github.com/edadma"))
-ThisBuild / version                := "0.0.1"
+ThisBuild / version                := "0.0.2"
 ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
 ThisBuild / sonatypeRepository     := "https://s01.oss.sonatype.org/service/local"
 
@@ -56,10 +56,10 @@ lazy val numbers = crossProject(JSPlatform, JVMPlatform, NativePlatform)
         "-language:existentials",
         "-language:dynamics",
       ),
-    organization := "io.github.edadma",
+    organization                            := "io.github.edadma",
     libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.19" % "test",
-    publishMavenStyle := true,
-    Test / publishArtifact := false
+    publishMavenStyle                       := true,
+    Test / publishArtifact                  := false,
   )
   .jvmSettings(
     libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.1.0" % "provided",
@@ -73,7 +73,7 @@ lazy val numbers = crossProject(JSPlatform, JVMPlatform, NativePlatform)
 //    Test / scalaJSUseTestModuleInitializer := false,
     Test / scalaJSUseMainModuleInitializer := false,
     Test / scalaJSUseTestModuleInitializer := true,
-    scalaJSUseMainModuleInitializer := true,
+    scalaJSUseMainModuleInitializer        := true,
   )
 
 lazy val root = project
