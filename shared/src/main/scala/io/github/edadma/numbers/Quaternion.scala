@@ -237,7 +237,10 @@ abstract class Quaternion[T: Numeric, F: Fractional, Q <: Quaternion[T, F, Q, P]
 
   def unary_- : Q = quaternion(-a, -b, -c, -d)
 
-  def inverse: Q = conj / norm
+  def inverse: Q =
+    val n = norm
+    if (n == implicitly[Numeric[T]].zero) sys.error("division by zero")
+    conj / n
 
   override def equals(o: Any): Boolean =
     o match {
