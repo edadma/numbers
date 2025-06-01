@@ -68,7 +68,7 @@ abstract class Complex[T: Numeric, F: Fractional, C <: Complex[T, F, C, P], P <:
     promote(_exp(fractional(re))) * promote(_cos(fractional(im)), _sin(fractional(im)))
 
   def sin: P =
-    (ix.exp - (-ix).exp) / 2 / promote(implicitly[Numeric[F]].zero, implicitly[Numeric[F]].one)
+    (ix.exp - (-ix).exp) / promote(implicitly[Numeric[F]].zero, implicitly[Numeric[F]].fromInt(2))
 
   def asin: P = (-i).promote * (ix.promote + (one - this * this).sqrt).ln
 
@@ -84,7 +84,7 @@ abstract class Complex[T: Numeric, F: Fractional, C <: Complex[T, F, C, P], P <:
 
   def cosh: P = (exp + (-this).exp) / 2
 
-  def tan: P = ((ix * 2).exp - 1) / i.promote / ((ix * 2).exp + 1)
+  def tan: P = sin / cos
 
   def atan: P = i.promote * ((one - ix).ln - (one + ix).ln) / 2
 
