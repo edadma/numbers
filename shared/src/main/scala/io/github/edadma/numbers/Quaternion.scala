@@ -247,75 +247,37 @@ abstract class Quaternion[T: Numeric, F: Fractional, Q <: Quaternion[T, F, Q, P]
 
   override def hashCode: Int = a.hashCode ^ b.hashCode ^ c.hashCode ^ d.hashCode
 
-//  override def toString: String =
-//    if (this == zero)
-//      "0"
-//    else {
-//      val buf = new StringBuilder
-//
-//      def imag(v: T, basis: Char): Unit =
-//        if (v != zerot) {
-//          if (v == onet) {
-//            if (buf.nonEmpty)
-//              buf += '+'
-//
-//            buf += basis
-//          } else if (v == -onet)
-//            buf ++= s"-$basis"
-//          else if (implicitly[Numeric[T]].lt(v, zerot))
-//            buf ++= s"$v$basis"
-//          else {
-//            if (buf.nonEmpty)
-//              buf += '+'
-//
-//            buf ++= s"$v$basis"
-//          }
-//        }
-//
-//      if (a != zerot)
-//        buf ++= a.toString
-//
-//      imag(b, 'i')
-//      imag(c, 'j')
-//      imag(d, 'k')
-//      buf.toString
-//    }
-
-  override def toString: String = {
-    def formatDouble(d: Double): String = {
-      if (d == d.toInt.toDouble) d.toInt.toString
-      else d.toString
-    }
-
+  override def toString: String =
     if (this == zero)
       "0"
     else {
       val buf = new StringBuilder
 
-      def imag(v: Double, basis: Char): Unit =
-        if (v != 0.0) {
-          if (v == 1.0) {
+      def imag(v: T, basis: Char): Unit =
+        if (v != zerot) {
+          if (v == onet) {
             if (buf.nonEmpty)
               buf += '+'
+
             buf += basis
-          } else if (v == -1.0)
+          } else if (v == -onet)
             buf ++= s"-$basis"
-          else if (v < 0.0)
-            buf ++= s"${formatDouble(v)}$basis"
+          else if (implicitly[Numeric[T]].lt(v, zerot))
+            buf ++= s"$v$basis"
           else {
             if (buf.nonEmpty)
               buf += '+'
-            buf ++= s"${formatDouble(v)}$basis"
+
+            buf ++= s"$v$basis"
           }
         }
 
-      if (a != 0.0)
-        buf ++= formatDouble(a)
+      if (a != zerot)
+        buf ++= a.toString
 
       imag(b, 'i')
       imag(c, 'j')
       imag(d, 'k')
       buf.toString
     }
-  }
 }

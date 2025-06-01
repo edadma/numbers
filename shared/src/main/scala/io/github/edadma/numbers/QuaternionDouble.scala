@@ -44,6 +44,44 @@ case class QuaternionDouble(a: Double, b: Double, c: Double, d: Double)
       case _ => false
     }
 
+  override def toString: String = {
+    def formatDouble(d: Double): String = {
+      if (d == d.toInt.toDouble) d.toInt.toString
+      else d.toString
+    }
+
+    if (this == zero)
+      "0"
+    else {
+      val buf = new StringBuilder
+
+      def imag(v: Double, basis: Char): Unit =
+        if (v != 0.0) {
+          if (v == 1.0) {
+            if (buf.nonEmpty)
+              buf += '+'
+            buf += basis
+          } else if (v == -1.0)
+            buf ++= s"-$basis"
+          else if (v < 0.0)
+            buf ++= s"${formatDouble(v)}$basis"
+          else {
+            if (buf.nonEmpty)
+              buf += '+'
+            buf ++= s"${formatDouble(v)}$basis"
+          }
+        }
+
+      if (a != 0.0)
+        buf ++= formatDouble(a)
+
+      imag(b, 'i')
+      imag(c, 'j')
+      imag(d, 'k')
+      buf.toString
+    }
+  }
+
 }
 
 object QuaternionDouble {
