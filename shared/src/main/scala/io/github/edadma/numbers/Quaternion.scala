@@ -34,7 +34,7 @@ abstract class Quaternion[T: Numeric, F: Fractional, Q <: Quaternion[T, F, Q, P]
 
   protected def _pow(a: F, b: F): F
 
-  protected def quaternion(a: T, b: T, c: T, e: T): Q
+  protected def quaternion(a: T, b: T, c: T, d: T): Q
 
   protected def quaternion(a: T): Q =
     quaternion(a, implicitly[Numeric[T]].zero, implicitly[Numeric[T]].zero, implicitly[Numeric[T]].zero)
