@@ -209,13 +209,11 @@ abstract class Quaternion[T: Numeric, F: Fractional, Q <: Quaternion[T, F, Q, P]
 
   def -(that: Quaternion[T, F, Q, P]): Q = quaternion(a - that.a, b - that.b, c - that.c, d - that.d)
 
-  def -(that: T): Q = quaternion(a - that, b - that, c - that, d - that)
+  def -(that: T): Q = quaternion(a - that, b, c, d)
 
-  def -(that: Int): Q = {
+  def -(that: Int): Q =
     val n = implicitly[Numeric[T]].fromInt(that)
-
-    quaternion(a - n, b - n, c - n, d - n)
-  }
+    quaternion(a - n, b, c, d)
 
   def /(that: Q): Q = this * that.inverse
 
