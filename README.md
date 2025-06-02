@@ -25,7 +25,7 @@ Key features include:
 Add the following to your `build.sbt`:
 
 ```scala
-libraryDependencies += "io.github.edadma" %%% "numbers" % "0.0.1"
+libraryDependencies += "io.github.edadma" %%% "numbers" % "0.0.4"
 ```
 
 ## Basic Usage
