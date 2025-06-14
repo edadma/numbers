@@ -35,6 +35,37 @@ class NumbersBasicTest extends AnyFlatSpec with Matchers {
     (c1 * c2) shouldBe ComplexDouble(-5, 10) // (1+2i)(3+4i) = 3+4i+6i+8i² = 3+10i-8 = -5+10i
   }
 
+  "ComplexDoubleIsFractional parser" should "parse complex numbers correctly" in {
+    import ComplexDoubleIsFractional.complexDoubleIsFractional
+
+    // Basic positive case
+    complexDoubleIsFractional.parseString("3+4i") shouldBe Some(ComplexDouble(3, 4))
+
+    // The bug case - negative imaginary
+    complexDoubleIsFractional.parseString("3-4i") shouldBe Some(ComplexDouble(3, -4))
+
+    // Unit imaginary cases
+    complexDoubleIsFractional.parseString("3+i") shouldBe Some(ComplexDouble(3, 1))
+    complexDoubleIsFractional.parseString("3-i") shouldBe Some(ComplexDouble(3, -1))
+
+    // Pure imaginary
+    complexDoubleIsFractional.parseString("4i") shouldBe Some(ComplexDouble(0, 4))
+    complexDoubleIsFractional.parseString("-4i") shouldBe Some(ComplexDouble(0, -4))
+    complexDoubleIsFractional.parseString("i") shouldBe Some(ComplexDouble(0, 1))
+    complexDoubleIsFractional.parseString("-i") shouldBe Some(ComplexDouble(0, -1))
+
+    // Decimal cases
+    complexDoubleIsFractional.parseString("3.5+2.7i") shouldBe Some(ComplexDouble(3.5, 2.7))
+    complexDoubleIsFractional.parseString("1.2-3.4i") shouldBe Some(ComplexDouble(1.2, -3.4))
+
+    // Scientific notation
+    complexDoubleIsFractional.parseString("1e2+3e-1i") shouldBe Some(ComplexDouble(100, 0.3))
+
+    // Invalid cases
+    complexDoubleIsFractional.parseString("not-a-complex") shouldBe None
+    complexDoubleIsFractional.parseString("3+4j") shouldBe None // j not i
+  }
+
   it should "handle special values and operations" in {
     ComplexDouble.zero shouldBe ComplexDouble(0, 0)
     ComplexDouble.one shouldBe ComplexDouble(1, 0)

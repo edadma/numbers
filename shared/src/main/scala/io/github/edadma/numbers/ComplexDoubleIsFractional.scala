@@ -13,11 +13,23 @@ trait ComplexDoubleIsFractional extends Fractional[ComplexDouble] {
   def negate(x: ComplexDouble): ComplexDouble = -x
 
   def parseString(str: String): Option[ComplexDouble] = {
-    import ComplexDoubleIsFractional.COMPLEX_DOUBLE
+    import ComplexDoubleIsFractional.{PURE_IMAGINARY, FULL_COMPLEX}
 
-    str match {
-      case COMPLEX_DOUBLE(re, im) => Some(ComplexDouble(re.toDouble, im.toDouble))
-      case _                      => None
+    val trimmed = str.trim
+
+    trimmed match {
+      case PURE_IMAGINARY(sign, coeff) =>
+        val coefficient = if (coeff.isEmpty) 1.0 else coeff.toDouble
+        val imaginary = if (sign == "-") -coefficient else coefficient
+        Some(ComplexDouble(0, imaginary))
+
+      case FULL_COMPLEX(real, sign, imagCoeff) =>
+        val realPart = real.toDouble
+        val coefficient = if (imagCoeff.isEmpty) 1.0 else imagCoeff.toDouble
+        val imagPart = if (sign == "-") -coefficient else coefficient
+        Some(ComplexDouble(realPart, imagPart))
+
+      case _ => None
     }
   }
 
@@ -37,7 +49,11 @@ trait ComplexDoubleIsFractional extends Fractional[ComplexDouble] {
 
 object ComplexDoubleIsFractional {
 
-  private val COMPLEX_DOUBLE = """(-?(?:0|[1-9]\d*)(?:\.\d*)?(?:[eE](?:\+|-|)\d+)?)[+-]((?:0|[1-9]\d*)(?:\.\d*)?(?:[eE](?:\+|-|)\d+)?)?i""".r
+  // Pure imaginary: "4i", "-4i", "i", "-i"
+  private val PURE_IMAGINARY = """^(-?)(\d*(?:\.\d*)?(?:[eE][+-]?\d+)?)i$""".r
+
+  // Full complex: "3+4i", "3-4i", "3+i", "3-i"
+  private val FULL_COMPLEX = """^(-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)([+-])(\d*(?:\.\d*)?(?:[eE][+-]?\d+)?)i$""".r
 
   implicit object complexDoubleIsFractional extends ComplexDoubleIsFractional
 
