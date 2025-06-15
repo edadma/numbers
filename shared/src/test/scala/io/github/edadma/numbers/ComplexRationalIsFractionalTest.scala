@@ -48,12 +48,19 @@ class ComplexRationalIsFractionalTest extends AnyFlatSpec with Matchers {
   }
 
   it should "parse pure rational imaginary numbers correctly" in {
-    // Test cases that should NOT parse (pure imaginary should probably not be supported by this parser)
+    // Pure rational imaginary numbers should parse successfully
     val result1 = complexRationalIsFractional.parseString("2/3i")
-    result1 shouldBe None // or maybe should be Some(ComplexRational(0, 2/3))? Depends on implementation
+    result1 shouldBe Some(ComplexRational(Rational(0), Rational(2, 3)))
 
     val result2 = complexRationalIsFractional.parseString("-2/3i")
-    result2 shouldBe None // or maybe should be Some(ComplexRational(0, -2/3))? Depends on implementation
+    result2 shouldBe Some(ComplexRational(Rational(0), Rational(-2, 3)))
+
+    // Additional test cases
+    val result3 = complexRationalIsFractional.parseString("1/4i")
+    result3 shouldBe Some(ComplexRational(Rational(0), Rational(1, 4)))
+
+    val result4 = complexRationalIsFractional.parseString("-5/7i")
+    result4 shouldBe Some(ComplexRational(Rational(0), Rational(-5, 7)))
   }
 
   it should "handle zero components correctly" in {

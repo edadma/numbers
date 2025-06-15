@@ -13,9 +13,19 @@ trait ComplexRationalIsFractional extends Fractional[ComplexRational] {
   def negate(x: ComplexRational): ComplexRational = -x
 
   def parseString(str: String): Option[ComplexRational] = {
-    import ComplexRationalIsFractional.COMPLEX_RATIONAL
+    import ComplexRationalIsFractional.{COMPLEX_RATIONAL, PURE_RATIONAL_IMAGINARY}
 
-    str match {
+    str.trim match {
+      // Try pure rational imaginary first (e.g., "2/3i", "-2/3i")
+      case PURE_RATIONAL_IMAGINARY(im) =>
+        try {
+          val imagPart = Rational(im)
+          Some(ComplexRational(Rational(0), imagPart))
+        } catch {
+          case _: IllegalArgumentException => None
+          case _: NumberFormatException    => None
+        }
+      // Then try full complex rational (e.g., "1/2+1/3i", "1/2-1/3i")
       case COMPLEX_RATIONAL(re, sign, im) =>
         try {
           val realPart = Rational(re)
@@ -50,7 +60,8 @@ trait ComplexRationalIsFractional extends Fractional[ComplexRational] {
 
 object ComplexRationalIsFractional {
 
-  private val COMPLEX_RATIONAL = """(-?\d+/\d+)([+-])(\d+/\d+)?i""".r
+  private val COMPLEX_RATIONAL        = """(-?\d+/\d+)([+-])(\d+/\d+)?i""".r
+  private val PURE_RATIONAL_IMAGINARY = """(-?\d+/\d+)i""".r
 
   implicit object complexRationalIsFractional extends ComplexRationalIsFractional
 
