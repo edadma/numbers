@@ -16,8 +16,21 @@ trait ComplexRationalIsFractional extends Fractional[ComplexRational] {
     import ComplexRationalIsFractional.COMPLEX_RATIONAL
 
     str match {
-      case COMPLEX_RATIONAL(re, im) => Some(ComplexRational(Rational(re), Rational(im)))
-      case _                        => None
+      case COMPLEX_RATIONAL(re, sign, im) =>
+        try {
+          val realPart = Rational(re)
+          val imagPart = if (im == null || im.isEmpty) {
+            if (sign == "-") Rational(-1) else Rational(1)
+          } else {
+            val imagRational = Rational(im)
+            if (sign == "-") -imagRational else imagRational
+          }
+          Some(ComplexRational(realPart, imagPart))
+        } catch {
+          case _: IllegalArgumentException => None // Handle division by zero, etc.
+          case _: NumberFormatException    => None // Handle malformed numbers
+        }
+      case _ => None
     }
   }
 
@@ -37,7 +50,7 @@ trait ComplexRationalIsFractional extends Fractional[ComplexRational] {
 
 object ComplexRationalIsFractional {
 
-  private val COMPLEX_RATIONAL = """(-?\d+/\d+)[+-](\d+/\d+)?i""".r
+  private val COMPLEX_RATIONAL = """(-?\d+/\d+)([+-])(\d+/\d+)?i""".r
 
   implicit object complexRationalIsFractional extends ComplexRationalIsFractional
 

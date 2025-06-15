@@ -110,8 +110,8 @@ class NumbersBasicTest extends AnyFlatSpec with Matchers {
 
   it should "handle large numbers" in {
     val large = BigInt("123456789012345678901234567890")
-    val c1 = ComplexBigInt(large, BigInt(1))
-    val c2 = ComplexBigInt(BigInt(2), large)
+    val c1    = ComplexBigInt(large, BigInt(1))
+    val c2    = ComplexBigInt(BigInt(2), large)
 
     val result = c1 + c2
     result.re shouldBe (large + 2)
@@ -239,8 +239,8 @@ class NumbersBasicTest extends AnyFlatSpec with Matchers {
 
   it should "handle large number arithmetic" in {
     val large = BigInt("999999999999999999999999999999")
-    val q1 = QuaternionBigInt(large, BigInt(1), BigInt(2), BigInt(3))
-    val q2 = QuaternionBigInt(BigInt(1), large, BigInt(4), BigInt(5))
+    val q1    = QuaternionBigInt(large, BigInt(1), BigInt(2), BigInt(3))
+    val q2    = QuaternionBigInt(BigInt(1), large, BigInt(4), BigInt(5))
 
     val result = q1 + q2
     result.a shouldBe (large + 1)
@@ -266,7 +266,7 @@ class NumbersBasicTest extends AnyFlatSpec with Matchers {
     import BigDecimalMath.decimal128._
 
     val precise = BigDecimal("1.234567890123456789012345678901234567890")
-    val q = QuaternionBigDecimal(precise, BigDecimal(0), BigDecimal(0), BigDecimal(0))
+    val q       = QuaternionBigDecimal(precise, BigDecimal(0), BigDecimal(0), BigDecimal(0))
 
     q.a shouldBe precise
     q.doubleValue shouldBe precise.toDouble +- 0.001
@@ -315,7 +315,7 @@ class NumbersBasicTest extends AnyFlatSpec with Matchers {
 
     // Test that constants are available and reasonable
     val pi = bdmath.Pi.v
-    val e = bdmath.E.v
+    val e  = bdmath.E.v
 
     pi shouldBe BigDecimal("3.14159") +- BigDecimal("0.01")
     e shouldBe BigDecimal("2.71828") +- BigDecimal("0.01")
@@ -324,7 +324,7 @@ class NumbersBasicTest extends AnyFlatSpec with Matchers {
   it should "handle basic mathematical functions" in {
     import BigDecimalMath.decimal128._
 
-    val two = BigDecimal(2)
+    val two  = BigDecimal(2)
     val four = BigDecimal(4)
 
     // sqrt(4) = 2
@@ -337,7 +337,7 @@ class NumbersBasicTest extends AnyFlatSpec with Matchers {
   "Arbitrary precision" should "maintain precision in calculations" in {
     // Test that we can work with very large numbers
     val hugeBigInt = BigInt("12345678901234567890123456789012345678901234567890")
-    val c = ComplexBigInt(hugeBigInt, BigInt(1))
+    val c          = ComplexBigInt(hugeBigInt, BigInt(1))
 
     c.re shouldBe hugeBigInt
     c.im shouldBe BigInt(1)
@@ -345,7 +345,7 @@ class NumbersBasicTest extends AnyFlatSpec with Matchers {
     // Test high precision decimals
     import BigDecimalMath.decimal128._
     val preciseDecimal = BigDecimal("1.123456789012345678901234567890123456789")
-    val cd = ComplexBigDecimal(preciseDecimal, BigDecimal(0))
+    val cd             = ComplexBigDecimal(preciseDecimal, BigDecimal(0))
 
     cd.re.toString should include("1.123456789012345678901234567890123456789")
   }
@@ -371,11 +371,11 @@ class NumbersBasicTest extends AnyFlatSpec with Matchers {
     import ComplexDoubleIsFractional._
 
     val numbers = List(ComplexDouble(1, 0), ComplexDouble(2, 0), ComplexDouble(3, 0))
-    val sum = numbers.sum
+    val sum     = numbers.sum
     sum shouldBe ComplexDouble(6, 0)
 
     // Test with rationals
-    val rationals = List(Rational(1, 2), Rational(1, 3), Rational(1, 6))
+    val rationals   = List(Rational(1, 2), Rational(1, 3), Rational(1, 6))
     val rationalSum = rationals.sum
     rationalSum shouldBe Rational(1, 1)
   }
